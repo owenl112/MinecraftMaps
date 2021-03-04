@@ -1,0 +1,260 @@
+<?xml version="1.0"?>
+<map proto="1.3.0">
+<name>Smileland</name>
+<version>0.3</version>
+<objective>Capture the wools and return it to your base!</objective>
+<authors>
+    <author uuid="eccd21d8-1b63-4357-815d-ff0bad154f7f"/> <!-- renter112 -->
+</authors>
+<teams>
+    <team id="green" color="green" max="16">Green</team>
+    <team id="orange" color="gold" max="16">Orange</team>
+</teams>
+
+<!-- spawns -->
+<spawns>
+    <default yaw="180">
+        <cuboid min="-1,42,39" max="2,42,42"/>
+    </default>
+    <spawn team="green" kit="green"  yaw="270">
+        <cuboid min="-24,26,2" max="-23,26,-2"/>
+    </spawn>
+    <spawn team="orange" kit="orange" yaw="90">
+        <cuboid min="24,26,-2" max="23,26,2"/>
+    </spawn>
+</spawns>
+
+<!-- the kits for each team-->
+<kits>
+    <kit name="team">
+        <item slot="0">iron sword</item>
+        <item slot="1" enchantment="arrow infinite:1">bow</item>
+        <item slot="2" enchantment="durability:3;dig speed:1">iron pickaxe</item>
+        <item slot="3" enchantment="durability:3;dig speed:2">iron axe</item>
+        <item slot="20" enchantment="durability:3;dig speed:1">stone spade</item>
+        <item slot="4" amount="64">log</item>
+        <item slot="5" amount="32">glass</item>
+        <item slot="30" amount="1">arrow</item>
+        <item slot="8" amount="64">cooked beef</item>
+        <potion duration="2" amplifier="5">damage resistance</potion>
+    </kit>
+    <kit name="green" parents="team">
+        <helmet color="55FF55">leather helmet</helmet>
+        <chestplate color="55FF55">leather chestplate</chestplate>
+        <leggings color="55FF55">leather leggings</leggings>
+        <boots>chainmail boots</boots>
+    </kit>
+    <kit name="orange" parents="team">
+        <helmet color="FFAA00">leather helmet</helmet>
+        <chestplate color="FFAA00">leather chestplate</chestplate>
+        <leggings color="FFAA00">leather leggings</leggings>
+        <boots>chainmail boots</boots>
+    </kit>
+</kits>
+
+<!-- items removed upon death? -->
+<itemremove>
+    <item>iron sword</item>
+    <item>bow</item>
+    <item>iron pickaxe</item>
+    <item>iron axe</item>
+    <item>stone spade</item>
+    <item>log</item>
+    <item>wood</item>
+    <item>glass</item>
+    <item>arrow</item>
+    <item>cooked beef</item>
+    <item>leather helmet</item>
+    <item>leather chestplate</item>
+    <item>leather leggings</item>
+    <item>chainmail boots</item>
+    <item>wool:9</item>
+    <item>wool:11</item>
+    <item>wool:14</item>
+    <item>wool:7</item>
+</itemremove>
+
+<!-- max build height lol -->
+<maxbuildheight>45</maxbuildheight>
+
+<!-- tools repaired upon killing someone? -->
+<toolrepair>
+    <tool>iron sword</tool>
+    <tool>bow</tool>
+    <tool>iron pickaxe</tool>
+    <tool>iron axe</tool>
+</toolrepair>
+
+<!-- the reward when you kill someone I think -->
+<killreward>
+    <item amount="1">golden apple</item>
+</killreward>
+
+<!-- playable zone -->
+<playable>
+    <rectangle min="-45,-30" max="46,51"/>
+</playable>
+
+<!-- makes iron keep coming back ~~ "borrowed" from Two Tier's file -->
+<renewables>
+    <renewable grow="true" interval="2s" particles="true" sound="true" avoid-entities="true">
+        <region>
+            <cuboid min="21,25,-9" max="25,29,-16"/> <!--orange right-->
+            <cuboid min="21,25,9" max="25,29,16"/> <!--orange left-->
+            <cuboid min="-21,25,-9" max="-25,29,-16"/> <!--green left-->
+            <cuboid min="-21,25,9" max="-25,29,16"/> <!--green right-->
+        </region>
+        <renew-filter>
+            <any>
+                <material>iron block</material>
+            </any>
+        </renew-filter>
+        <replace-filter>
+            <any>
+                <material>air</material>
+                <material>wood</material>
+                <material>glass</material>
+            </any>
+        </replace-filter>
+    </renewable>
+</renewables>
+
+<!-- filters for stuff, idk yet -->
+<filters>
+    <filter name="only-green">
+        <team>green</team>
+    </filter>
+    <filter name="only-orange">
+        <team>orange</team>
+    </filter>
+
+    <!-- two filters that keep the other team from using chests / workbenches -->
+    <filter name="only-green-usage">
+        <not>
+            <all>
+                <any>
+                    <block>chest</block>
+                    <block>workbench</block>
+                </any>
+                <team>orange</team>
+            </all>
+        </not>
+    </filter>
+    <filter name="only-orange-usage">
+        <not>
+            <all>
+                <any>
+                    <block>chest</block>
+                    <block>workbench</block>
+                </any>
+                <team>green</team>
+            </all>
+        </not>
+    </filter>
+
+    <!-- let teams only break webs in the wool room -->
+    <filter name="cobwebs-green">
+        <all >
+            <material>web</material>
+            <team>green</team>
+        </all>
+    </filter>
+    <filter name="cobwebs-orange">
+        <all>
+            <material>web</material>
+            <team>orange</team>
+        </all>
+    </filter>
+</filters>
+
+<!-- regions for wool -->
+<regions>
+    <!-- the rooms green needs to get (they are safe in) -->
+    <union name="green-wool-rooms"> 
+        <!-- <rectangle name="red-room" min="34,-19", max="42,-27" /> -->
+        <rectangle name="red-room" min="34,-19" max="42,-27" />
+        <rectangle name="pink-room" min="34,19" max="42,27" />
+    </union>
+    <apply block-place="deny-all" block-break="cobwebs-green" use="only-green-usage">
+        <region name="green-wool-rooms"/>
+    </apply>
+    <apply enter="only-green" message="You may not enter your own wool room!">
+        <region name="green-wool-rooms"/>
+    </apply>
+
+    <!-- same shit but for orange -->
+    <union name="orange-wool-rooms"> 
+        <!-- <rectangle name="blue-room" min="-34,-19", max="-42,-27"/> -->
+        <rectangle name="blue-room" min="-34,-19" max="-42,-27" />
+        <rectangle name="cyan-room" min="-34,19" max="-42,27" />
+    </union>
+    <apply block-place="deny-all" block-break="cobwebs-orange" use="only-orange-usage">
+        <region name="orange-wool-rooms"/>
+    </apply>
+    <apply enter="only-orange" message="You may not enter your own wool room!">
+        <region name="orange-wool-rooms"/>
+    </apply>
+
+
+
+    <!-- void protection -->
+    <apply block-place="deny-all" message="You may not place blocks in the void">
+        <rectangle min="-26,-19" max="-50,19" /> <!-- inbetween wools on green-->
+        <rectangle min="27,18" max="50,-19" /> <!-- inbetween wools on orange-->
+
+        <rectangle min="-41,50" max="-55,-50" /> <!-- behind wools on green-->
+        <rectangle min="41,50" max="55,-50" />; <!--behind wools on orange-->
+
+        <!-- sides of the map -->
+        <rectangle min="50,-26" max="-50,-35" /> 
+        <rectangle min="50,26" max="-50,35" />
+
+        <!-- bottom of map -->
+        <cuboid min="-50,0,50" max="50,20,-50"/>
+    </apply>
+
+        <!--spawn building protection-->
+    <apply block="deny-all" message="You may not break or place blocks in the spawn" use="only-orange-usage">
+        <cuboid name="orange-castle" min="18,19,5" max="27,50,-6"/>
+    </apply>
+    <apply block="deny-all" message="You may not break or place blocks in the spawn" use="only-green-usage">
+        <cuboid name="green-castle" min="-18,19,-5" max="-27,50,6"/>
+    </apply>
+
+    <!-- spawn people protection -->
+    <apply enter="only-green" message="You may not enter the enemy team's spawn">
+        <cuboid name="green-spawn-room" min="-19,20,5" max="-26,45,-5"/>
+    </apply>
+    <apply enter="only-orange" message="You may not enter the enemy team's spawn">
+        <cuboid name="orange-spawn-room" min="19,20,5" max="26,45,-5" />
+    </apply>
+</regions>
+
+<!-- where the wools go -->
+<wools team="green">
+    <wool color="red">
+        <block>-11,27,-5</block>
+    </wool>
+    <wool color="pink">
+        <block>-11,27,5</block>
+    </wool>
+</wools>
+<wools team="orange">
+    <wool color="cyan">
+        <block>11,27,5</block>
+    </wool>
+    <wool color="blue">
+        <block>11,27,-5</block>
+    </wool>
+</wools>
+
+<!-- stopping damages - most aren't needed but why not be safe -->
+<disabledamage>
+    <damage ally="true" self="false" enemy="false" other="false">fire</damage>
+    <damage ally="true" self="false" enemy="false" other="false">fire tick</damage>
+    <damage ally="true" self="false" enemy="false" other="false">poison</damage>
+    <damage ally="true" self="false" enemy="false" other="false">magic</damage>
+</disabledamage>
+
+
+</map>
